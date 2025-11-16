@@ -72,7 +72,7 @@ export const MedicationManagementt = ({
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `http://localhost:7777/clinician/patient/${patientId}/medications`,
+        `${process.env.BASE_URL}/clinician/patient/${patientId}/medications`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

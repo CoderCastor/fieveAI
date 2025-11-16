@@ -28,7 +28,7 @@ function AITesting() {
 
   // Fetch API info on component mount
   React.useEffect(() => {
-    axios.get('http://localhost:5000/')
+    axios.get('https://backend-fever-care-ai.onrender.com/')
       .then(response => setApiInfo(response.data))
       .catch(err => console.error('API info fetch failed:', err));
   }, []);
@@ -64,7 +64,7 @@ function AITesting() {
     };
 
     try {
-      const response = await axios.post('http://localhost:7777/ml/predict', apiData);
+      const response = await axios.post(`${process.env.BASE_URL}/ml/predict`, apiData);
       setResult(response.data);
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to get prediction. Please try again.');

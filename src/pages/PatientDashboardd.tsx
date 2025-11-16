@@ -167,7 +167,7 @@ const PatientDashboardd = () => {
       }
 
       const response = await axios.get(
-        "http://localhost:7777/patient/dashboard",
+        `${process.env.BASE_URL}/patient/dashboard`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -251,7 +251,7 @@ const PatientDashboardd = () => {
       }
 
       const response = await axios.post(
-        "http://localhost:7777/patient/episode/start",
+        `${process.env.BASE_URL}/patient/episode/start`,
         {},
         {
           headers: {
@@ -290,7 +290,7 @@ const PatientDashboardd = () => {
       const token = localStorage.getItem("token");
 
       const response = await axios.post(
-        "http://localhost:7777/patient/alert/send",
+        `${process.env.BASE_URL}/patient/alert/send`,
         {
           message: alertMessage,
           severity: alertSeverity,
@@ -322,7 +322,7 @@ const PatientDashboardd = () => {
       const token = localStorage.getItem("token");
 
       await axios.put(
-        `http://localhost:7777/patient/alerts/${alertId}/read`,
+        `${process.env.BASE_URL}/patient/alerts/${alertId}/read`,
         {},
         {
           headers: {

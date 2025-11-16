@@ -67,7 +67,7 @@ export const MedicationManagementt = ({
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `http://localhost:7777/clinician/patient/${patientId}/medications`,
+        `${process.env.BASE_URL}/clinician/patient/${patientId}/medications`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -94,7 +94,7 @@ export const MedicationManagementt = ({
 
       if (editingMed) {
         const response = await axios.put(
-          `http://localhost:7777/clinician/medication/${editingMed._id}`,
+          `${process.env.BASE_URL}/clinician/medication/${editingMed._id}`,
           formData,
           {
             headers: {
@@ -109,7 +109,7 @@ export const MedicationManagementt = ({
         }
       } else {
         const response = await axios.post(
-          `http://localhost:7777/clinician/patient/${patientId}/medication`,
+          `${process.env.BASE_URL}/clinician/patient/${patientId}/medication`,
           formData,
           {
             headers: {
@@ -139,7 +139,7 @@ export const MedicationManagementt = ({
     try {
       const token = localStorage.getItem("token");
       const response = await axios.delete(
-        `http://localhost:7777/clinician/medication/${medId}`,
+        `${process.env.BASE_URL}/clinician/medication/${medId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -161,7 +161,7 @@ export const MedicationManagementt = ({
     try {
       const token = localStorage.getItem("token");
       const response = await axios.put(
-        `http://localhost:7777/clinician/medication/${med._id}`,
+        `${process.env.BASE_URL}/clinician/medication/${med._id}`,
         { isActive: !med.isActive },
         {
           headers: {

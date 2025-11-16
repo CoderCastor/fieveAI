@@ -48,7 +48,7 @@ function AdvancedAI() {
 
       // Fetch patient data from backend
       const response = await axios.get(
-        "http://localhost:7777/patient/advanced-ai-data",
+        `${process.env.BASE_URL}/patient/advanced-ai-data`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -97,7 +97,7 @@ function AdvancedAI() {
       const token = localStorage.getItem("token");
 
       const response = await axios.post(
-        "http://localhost:7777/ml/predict",
+        `${process.env.BASE_URL}/ml/predict`,
         {
           patientId: data.patient._id,
           episodeId: data.episode._id,

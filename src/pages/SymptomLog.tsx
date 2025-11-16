@@ -77,7 +77,7 @@ export default function SymptomLog() {
       const token = localStorage.getItem("token");
 
       const response = await axios.get(
-        "http://localhost:7777/patient/episode/active",
+        `${process.env.BASE_URL}/patient/episode/active`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -147,7 +147,7 @@ export default function SymptomLog() {
       const token = localStorage.getItem("token");
 
       const response = await axios.post(
-        "http://localhost:7777/patient/symptoms/quick",
+        `${process.env.BASE_URL}/patient/symptoms/quick`,
         {
           symptoms: result.data.symptoms,
           temperature: result.data.temperature,

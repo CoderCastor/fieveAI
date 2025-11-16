@@ -42,7 +42,7 @@ export default function PatientLogin() {
       }
 
       // Make API call using Axios
-      const response = await axios.post("http://localhost:7777/login/patient", {
+      const response = await axios.post(`${process.env.BASE_URL}/login/patient`, {
         email: result.data.email,
         password: result.data.password,
       });

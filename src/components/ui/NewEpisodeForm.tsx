@@ -40,7 +40,7 @@ export function NewEpisodeForm({ onSuccess }: NewEpisodeFormProps) {
       const token = localStorage.getItem("token");
 
       const response = await axios.post(
-        "http://localhost:7777/patient/episode/start-with-history",
+        `${process.env.BASE_URL}/patient/episode/start-with-history`,
         formData,
         {
           headers: {

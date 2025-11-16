@@ -70,7 +70,9 @@ const ClinicianDashboardd = () => {
   const [riskFilter, setRiskFilter] = useState("all");
   const [sortBy, setSortBy] = useState<"name" | "risk" | "updated">("risk");
   const [loading, setLoading] = useState(true);
-  const [selectedPatients, setSelectedPatients] = useState<Set<string>>(new Set());
+  const [selectedPatients, setSelectedPatients] = useState<Set<string>>(
+    new Set()
+  );
 
   useEffect(() => {
     checkAuth();
@@ -78,26 +80,29 @@ const ClinicianDashboardd = () => {
   }, []);
 
   const checkAuth = () => {
-    const token = localStorage.getItem('token');
-    const userRole = localStorage.getItem('userRole');
+    const token = localStorage.getItem("token");
+    const userRole = localStorage.getItem("userRole");
 
-    if (!token || userRole !== 'clinician') {
-      toast.error('Please login as clinician to access this dashboard');
-      navigate('/signin-clinician');
+    if (!token || userRole !== "clinician") {
+      toast.error("Please login as clinician to access this dashboard");
+      navigate("/signin-clinician");
     }
   };
 
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
 
-      const response = await axios.get('http://localhost:7777/clinician/dashboard', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await axios.get(
+        `${process.env.BASE_URL}/clinician/dashboard`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (response.data.success) {
         setPatients(response.data.patients);
@@ -105,16 +110,16 @@ const ClinicianDashboardd = () => {
         setStats(response.data.stats);
       }
     } catch (error: any) {
-      console.error('Dashboard error:', error);
+      console.error("Dashboard error:", error);
       if (error.response?.status === 403) {
-        toast.error('Access denied. Clinician role required.');
-        navigate('/signin-clinician');
+        toast.error("Access denied. Clinician role required.");
+        navigate("/signin-clinician");
       } else if (error.response?.status === 401) {
-        toast.error('Session expired. Please login again.');
+        toast.error("Session expired. Please login again.");
         localStorage.clear();
-        navigate('/signin-clinician');
+        navigate("/signin-clinician");
       } else {
-        toast.error('Failed to load dashboard');
+        toast.error("Failed to load dashboard");
       }
     } finally {
       setLoading(false);
@@ -123,38 +128,45 @@ const ClinicianDashboardd = () => {
 
   const handleLogout = () => {
     localStorage.clear();
-    toast.success('Logged out successfully');
-    navigate('/signin-clinician');
+    toast.success("Logged out successfully");
+    navigate("/signin-clinician");
   };
 
-  const filteredPatients = patients.filter(patient => {
-    const matchesSearch = 
-      patient.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      patient.phone?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      patient.id.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesStatus = statusFilter === "all" || patient.status === statusFilter;
-    
-    const matchesRisk = 
-      riskFilter === "all" ||
-      (riskFilter === "high" && patient.risk_score > 70) ||
-      (riskFilter === "medium" && patient.risk_score >= 40 && patient.risk_score <= 70) ||
-      (riskFilter === "low" && patient.risk_score < 40);
-    
-    return matchesSearch && matchesStatus && matchesRisk;
-  }).sort((a, b) => {
-    if (sortBy === "name") {
-      return a.full_name.localeCompare(b.full_name);
-    } else if (sortBy === "risk") {
-      return b.risk_score - a.risk_score;
-    } else {
-      return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
-    }
-  });
+  const filteredPatients = patients
+    .filter((patient) => {
+      const matchesSearch =
+        patient.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        patient.phone?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        patient.id.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const matchesStatus =
+        statusFilter === "all" || patient.status === statusFilter;
+
+      const matchesRisk =
+        riskFilter === "all" ||
+        (riskFilter === "high" && patient.risk_score > 70) ||
+        (riskFilter === "medium" &&
+          patient.risk_score >= 40 &&
+          patient.risk_score <= 70) ||
+        (riskFilter === "low" && patient.risk_score < 40);
+
+      return matchesSearch && matchesStatus && matchesRisk;
+    })
+    .sort((a, b) => {
+      if (sortBy === "name") {
+        return a.full_name.localeCompare(b.full_name);
+      } else if (sortBy === "risk") {
+        return b.risk_score - a.risk_score;
+      } else {
+        return (
+          new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+        );
+      }
+    });
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedPatients(new Set(filteredPatients.map(p => p.id)));
+      setSelectedPatients(new Set(filteredPatients.map((p) => p.id)));
     } else {
       setSelectedPatients(new Set());
     }
@@ -172,47 +184,63 @@ const ClinicianDashboardd = () => {
 
   const handleExportSelected = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       const response = await axios.post(
-        'http://localhost:7777/clinician/export',
+        `${process.env.BASE_URL}/clinician/export`,
         { patientIds: Array.from(selectedPatients) },
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         }
       );
 
       if (response.data.success) {
         const csvContent = [
-          ['ID', 'Name', 'Email', 'Phone', 'Age', 'Gender', 'Blood Group'],
+          ["ID", "Name", "Email", "Phone", "Age", "Gender", "Blood Group"],
           ...response.data.data.map((p: any) => [
-            p.id, p.name, p.email, p.phone, p.age, p.gender, p.bloodGroup
-          ])
-        ].map(row => row.join(',')).join('\n');
-        
-        const blob = new Blob([csvContent], { type: 'text/csv' });
+            p.id,
+            p.name,
+            p.email,
+            p.phone,
+            p.age,
+            p.gender,
+            p.bloodGroup,
+          ]),
+        ]
+          .map((row) => row.join(","))
+          .join("\n");
+
+        const blob = new Blob([csvContent], { type: "text/csv" });
         const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = url;
-        a.download = `patients-export-${new Date().toISOString().split('T')[0]}.csv`;
+        a.download = `patients-export-${
+          new Date().toISOString().split("T")[0]
+        }.csv`;
         a.click();
         toast.success(`Exported ${selectedPatients.size} patients`);
       }
     } catch (error) {
-      toast.error('Failed to export patients');
+      toast.error("Failed to export patients");
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "critical": return "destructive";
-      case "high": return "destructive";
-      case "moderate": return "default";
-      case "mild": return "secondary";
-      case "active": return "default";
-      default: return "outline";
+      case "critical":
+        return "destructive";
+      case "high":
+        return "destructive";
+      case "moderate":
+        return "default";
+      case "mild":
+        return "secondary";
+      case "active":
+        return "default";
+      default:
+        return "outline";
     }
   };
 
@@ -227,12 +255,13 @@ const ClinicianDashboardd = () => {
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
     const diffMins = Math.floor(diffMs / 60000);
-    
+
     if (diffMins < 60) return `${diffMins} min ago`;
     const diffHours = Math.floor(diffMins / 60);
-    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+    if (diffHours < 24)
+      return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
     const diffDays = Math.floor(diffHours / 24);
-    return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+    return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
   };
 
   if (loading) {
@@ -261,8 +290,8 @@ const ClinicianDashboardd = () => {
           <div className="flex items-center gap-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input 
-                placeholder="Search patients..." 
+              <Input
+                placeholder="Search patients..."
                 className="pl-9 w-64"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -296,16 +325,24 @@ const ClinicianDashboardd = () => {
             <div className="text-sm text-muted-foreground">Total Patients</div>
           </Card>
 
-          <Card className="p-6 border-2 border-accent/20 bg-accent/5 hover-lift animate-scale-in" style={{ animationDelay: '0.1s' }}>
+          <Card
+            className="p-6 border-2 border-accent/20 bg-accent/5 hover-lift animate-scale-in"
+            style={{ animationDelay: "0.1s" }}
+          >
             <div className="flex items-center justify-between mb-4">
               <AlertTriangle className="h-8 w-8 text-accent" />
               <Badge variant="destructive">{stats.unreadAlertsCount}</Badge>
             </div>
-            <div className="text-3xl font-bold mb-1">{stats.unreadAlertsCount}</div>
+            <div className="text-3xl font-bold mb-1">
+              {stats.unreadAlertsCount}
+            </div>
             <div className="text-sm text-muted-foreground">Active Alerts</div>
           </Card>
 
-          <Card className="p-6 border-2 border-destructive/20 bg-destructive/5 hover-lift animate-scale-in" style={{ animationDelay: '0.2s' }}>
+          <Card
+            className="p-6 border-2 border-destructive/20 bg-destructive/5 hover-lift animate-scale-in"
+            style={{ animationDelay: "0.2s" }}
+          >
             <div className="flex items-center justify-between mb-4">
               <Thermometer className="h-8 w-8 text-destructive" />
               <span className="text-sm font-medium">Live</span>
@@ -314,7 +351,10 @@ const ClinicianDashboardd = () => {
             <div className="text-sm text-muted-foreground">High Risk Cases</div>
           </Card>
 
-          <Card className="p-6 border-2 border-border hover-lift animate-scale-in" style={{ animationDelay: '0.3s' }}>
+          <Card
+            className="p-6 border-2 border-border hover-lift animate-scale-in"
+            style={{ animationDelay: "0.3s" }}
+          >
             <div className="flex items-center justify-between mb-4">
               <MapPin className="h-8 w-8 text-primary" />
             </div>
@@ -328,8 +368,8 @@ const ClinicianDashboardd = () => {
           <div className="p-6 border-b border-border">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold">Monitored Patients</h2>
-              <Button 
-                size="sm" 
+              <Button
+                size="sm"
                 className="bg-gradient-primary"
                 onClick={handleExportSelected}
                 disabled={selectedPatients.size === 0}
@@ -352,7 +392,7 @@ const ClinicianDashboardd = () => {
                   <SelectItem value="active">Active</SelectItem>
                 </SelectContent>
               </Select>
-              
+
               <Select value={riskFilter} onValueChange={setRiskFilter}>
                 <SelectTrigger className="w-[140px]">
                   <AlertTriangle className="h-4 w-4 mr-2" />
@@ -366,7 +406,12 @@ const ClinicianDashboardd = () => {
                 </SelectContent>
               </Select>
 
-              <Select value={sortBy} onValueChange={(value: "name" | "risk" | "updated") => setSortBy(value)}>
+              <Select
+                value={sortBy}
+                onValueChange={(value: "name" | "risk" | "updated") =>
+                  setSortBy(value)
+                }
+              >
                 <SelectTrigger className="w-[140px]">
                   <TrendingUp className="h-4 w-4 mr-2" />
                   <SelectValue placeholder="Sort By" />
@@ -386,14 +431,21 @@ const ClinicianDashboardd = () => {
 
           <div className="divide-y divide-border">
             {loading ? (
-              <div className="p-6 text-center text-muted-foreground">Loading patients...</div>
+              <div className="p-6 text-center text-muted-foreground">
+                Loading patients...
+              </div>
             ) : filteredPatients.length === 0 ? (
-              <div className="p-6 text-center text-muted-foreground">No patients found</div>
+              <div className="p-6 text-center text-muted-foreground">
+                No patients found
+              </div>
             ) : (
               <>
                 <div className="p-4 bg-muted/30 border-b border-border flex items-center gap-4">
                   <Checkbox
-                    checked={selectedPatients.size === filteredPatients.length && filteredPatients.length > 0}
+                    checked={
+                      selectedPatients.size === filteredPatients.length &&
+                      filteredPatients.length > 0
+                    }
                     onCheckedChange={handleSelectAll}
                   />
                   <span className="text-sm font-medium">Select All</span>
@@ -408,15 +460,22 @@ const ClinicianDashboardd = () => {
                       <div className="flex items-center gap-4 flex-1">
                         <Checkbox
                           checked={selectedPatients.has(patient.id)}
-                          onCheckedChange={(checked) => handleSelectPatient(patient.id, checked as boolean)}
+                          onCheckedChange={(checked) =>
+                            handleSelectPatient(patient.id, checked as boolean)
+                          }
                         />
                         <div className="h-12 w-12 rounded-full bg-gradient-primary flex items-center justify-center text-primary-foreground font-bold">
                           {patient.full_name.charAt(0)}
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-1">
-                            <h3 className="font-semibold">{patient.full_name}</h3>
-                            <Badge variant={getStatusColor(patient.status)} className="capitalize">
+                            <h3 className="font-semibold">
+                              {patient.full_name}
+                            </h3>
+                            <Badge
+                              variant={getStatusColor(patient.status)}
+                              className="capitalize"
+                            >
                               {patient.status}
                             </Badge>
                             {patient.diagnosis && (
@@ -426,7 +485,7 @@ const ClinicianDashboardd = () => {
                             )}
                           </div>
                           <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                            <span>Age: {patient.age || 'N/A'}</span>
+                            <span>Age: {patient.age || "N/A"}</span>
                             {patient.temperature && (
                               <span className="flex items-center gap-1">
                                 <Thermometer className="h-3 w-3" />
@@ -443,13 +502,21 @@ const ClinicianDashboardd = () => {
 
                       <div className="flex items-center gap-8">
                         <div className="text-center">
-                          <div className={`text-2xl font-bold mb-1 ${getRiskColor(patient.risk_score)}`}>
+                          <div
+                            className={`text-2xl font-bold mb-1 ${getRiskColor(
+                              patient.risk_score
+                            )}`}
+                          >
                             {patient.risk_score}%
                           </div>
-                          <div className="text-xs text-muted-foreground">Risk Score</div>
+                          <div className="text-xs text-muted-foreground">
+                            Risk Score
+                          </div>
                         </div>
                         <Link to={`/clinician/patientt/${patient.id}`}>
-                          <Button variant="outline" size="sm">View Details</Button>
+                          <Button variant="outline" size="sm">
+                            View Details
+                          </Button>
                         </Link>
                       </div>
                     </div>

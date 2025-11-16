@@ -83,7 +83,7 @@ export const PatientMedicationss = ({
       const token = localStorage.getItem("token");
 
       const response = await axios.get(
-        "http://localhost:7777/patient/medications",
+        `${process.env.BASE_URL}/patient/medications`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -111,7 +111,7 @@ export const PatientMedicationss = ({
       await Promise.all(
         meds.map(async (med) => {
           const response = await axios.get(
-            `http://localhost:7777/patient/medication-logs/${med._id}/today`,
+            `${process.env.BASE_URL}/patient/medication-logs/${med._id}/today`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -146,7 +146,7 @@ export const PatientMedicationss = ({
         : [];
 
       const response = await axios.post(
-        "http://localhost:7777/patient/medication-log",
+        `${process.env.BASE_URL}/patient/medication-log`,
         {
           medicationId: selectedMed._id,
           status: logStatus,

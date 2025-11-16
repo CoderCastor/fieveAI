@@ -113,7 +113,7 @@ export default function PatientDetailVieww() {
       const token = localStorage.getItem("token");
 
       const response = await axios.get(
-        `http://localhost:7777/clinician/patient/${patientId}`,
+        `${process.env.BASE_URL}/clinician/patient/${patientId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -150,7 +150,7 @@ export default function PatientDetailVieww() {
       const token = localStorage.getItem("token");
 
       const response = await axios.post(
-        `http://localhost:7777/clinician/patient/${patientId}/alert`,
+        `${process.env.BASE_URL}/clinician/patient/${patientId}/alert`,
         {
           message: alertMessage,
           severity: alertSeverity,

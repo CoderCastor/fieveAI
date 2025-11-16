@@ -44,7 +44,7 @@ function ClinicianAIAnalysis() {
       const token = localStorage.getItem("token");
 
       const response = await axios.get(
-        `http://localhost:7777/clinician/patient/${patientId}/ai-analysis`,
+        `${process.env.BASE_URL}/clinician/patient/${patientId}/ai-analysis`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -125,7 +125,7 @@ function ClinicianAIAnalysis() {
       const token = localStorage.getItem("token");
 
       const response = await axios.post(
-        "http://localhost:7777/ml/predict",
+        `${process.env.BASE_URL}/ml/predict`,
         {
           patientId: data.patient._id,
           episodeId: data.episode._id,

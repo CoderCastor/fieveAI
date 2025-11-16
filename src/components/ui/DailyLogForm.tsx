@@ -56,7 +56,7 @@ export function DailyLogForm({
       const token = localStorage.getItem("token");
 
       const response = await axios.post(
-        "http://localhost:7777/patient/symptoms/daily",
+        `${process.env.BASE_URL}/patient/symptoms/daily`,
         {
           episodeId,
           dayOfIllness: dayNumber,

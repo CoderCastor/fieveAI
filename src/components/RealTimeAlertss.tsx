@@ -34,7 +34,7 @@ export function RealTimeAlertss({ onAlertCountChange }: RealTimeAlertsProps) {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        "http://localhost:7777/clinician/alerts?status=unread",
+        `${process.env.BASE_URL}/clinician/alerts?status=unread`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -60,7 +60,7 @@ export function RealTimeAlertss({ onAlertCountChange }: RealTimeAlertsProps) {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:7777/clinician/alerts/${alertId}/read`,
+        `${process.env.BASE_URL}/clinician/alerts/${alertId}/read`,
         {},
         {
           headers: {

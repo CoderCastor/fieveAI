@@ -43,7 +43,7 @@ export default function ClinicianLogin() {
 
       // ✅ FIXED: Added missing slash in URL
       const response = await axios.post(
-        "http://localhost:7777/login/clinician",
+        `${process.env.BASE_URL}/login/clinician`,
         {
           email: result.data.email,
           password: result.data.password,
