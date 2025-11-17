@@ -14,6 +14,8 @@ interface DailyLogFormProps {
   onSuccess: () => void;
 }
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:7777"
+
 export function DailyLogForm({
   episodeId,
   dayNumber,
@@ -56,7 +58,7 @@ export function DailyLogForm({
       const token = localStorage.getItem("token");
 
       const response = await axios.post(
-        `${process.env.BASE_URL}/patient/symptoms/daily`,
+        `${API_URL}/patient/symptoms/daily`,
         {
           episodeId,
           dayOfIllness: dayNumber,

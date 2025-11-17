@@ -21,6 +21,8 @@ const loginSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:7777"
+
 export default function PatientLogin() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -42,7 +44,7 @@ export default function PatientLogin() {
       }
 
       // Make API call using Axios
-      const response = await axios.post(`${process.env.BASE_URL}/login/patient`, {
+      const response = await axios.post(`${API_URL}/login/patient`, {
         email: result.data.email,
         password: result.data.password,
       });

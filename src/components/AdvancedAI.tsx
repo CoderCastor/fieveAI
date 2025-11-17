@@ -46,16 +46,15 @@ function AdvancedAI() {
         return;
       }
 
+      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:7777"
+
       // Fetch patient data from backend
-      const response = await axios.get(
-        `${process.env.BASE_URL}/patient/advanced-ai-data`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axios.get(`${API_URL}/patient/advanced-ai-data`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       if (response.data.success) {
         const data = response.data.data;
@@ -96,8 +95,10 @@ function AdvancedAI() {
     try {
       const token = localStorage.getItem("token");
 
+      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:7777"
+      
       const response = await axios.post(
-        `${process.env.BASE_URL}/ml/predict`,
+        `${API_URL}/ml/predict`,
         {
           patientId: data.patient._id,
           episodeId: data.episode._id,

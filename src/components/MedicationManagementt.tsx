@@ -42,6 +42,8 @@ interface MedicationManagementProps {
   patientId: string;
 }
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:7777"
+
 export const MedicationManagementt = ({
   patientId,
 }: MedicationManagementProps) => {
@@ -72,7 +74,7 @@ export const MedicationManagementt = ({
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `${process.env.BASE_URL}/clinician/patient/${patientId}/medications`,
+        `${API_URL}/clinician/patient/${patientId}/medications`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

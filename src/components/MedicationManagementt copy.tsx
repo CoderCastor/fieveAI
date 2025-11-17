@@ -42,6 +42,8 @@ interface MedicationManagementProps {
   patientId: string;
 }
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:7777"
+
 export const MedicationManagementt = ({
   patientId,
 }: MedicationManagementProps) => {
@@ -63,11 +65,13 @@ export const MedicationManagementt = ({
     fetchMedications();
   }, [patientId]);
 
+  
+
   const fetchMedications = async () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `${process.env.BASE_URL}/clinician/patient/${patientId}/medications`,
+        `${API_URL}/clinician/patient/${patientId}/medications`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -94,7 +98,7 @@ export const MedicationManagementt = ({
 
       if (editingMed) {
         const response = await axios.put(
-          `${process.env.BASE_URL}/clinician/medication/${editingMed._id}`,
+          `${API_URL}/clinician/medication/${editingMed._id}`,
           formData,
           {
             headers: {
@@ -109,7 +113,7 @@ export const MedicationManagementt = ({
         }
       } else {
         const response = await axios.post(
-          `${process.env.BASE_URL}/clinician/patient/${patientId}/medication`,
+          `${API_URL}/clinician/patient/${patientId}/medication`,
           formData,
           {
             headers: {
@@ -139,7 +143,7 @@ export const MedicationManagementt = ({
     try {
       const token = localStorage.getItem("token");
       const response = await axios.delete(
-        `${process.env.BASE_URL}/clinician/medication/${medId}`,
+        `${API_URL}/clinician/medication/${medId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -161,7 +165,7 @@ export const MedicationManagementt = ({
     try {
       const token = localStorage.getItem("token");
       const response = await axios.put(
-        `${process.env.BASE_URL}/clinician/medication/${med._id}`,
+        `${API_URL}/clinician/medication/${med._id}`,
         { isActive: !med.isActive },
         {
           headers: {

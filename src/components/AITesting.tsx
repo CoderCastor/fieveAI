@@ -1,14 +1,18 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import './App.css';
-import { FaThermometerHalf, FaCalendarAlt, FaHeartbeat, FaVial } from 'react-icons/fa';
+import React, { useState } from "react";
+import axios from "axios";
+import "./App.css";
+import {
+  FaThermometerHalf,
+  FaCalendarAlt,
+  FaHeartbeat,
+  FaVial,
+} from "react-icons/fa";
 const FaMosquito = () => <span>🦟</span>;
-
 
 function AITesting() {
   const [formData, setFormData] = useState({
-    temperature: '',
-    fever_days: '',
+    temperature: "",
+    fever_days: "",
     headache: false,
     body_pain: false,
     eye_pain: false,
@@ -16,9 +20,9 @@ function AITesting() {
     abdominal_pain: false,
     rash: false,
     bleeding: false,
-    platelet_count: '',
+    platelet_count: "",
     mosquito_exposure: false,
-    travel: false
+    travel: false,
   });
 
   const [result, setResult] = useState(null);
@@ -28,16 +32,17 @@ function AITesting() {
 
   // Fetch API info on component mount
   React.useEffect(() => {
-    axios.get('https://backend-fever-care-ai.onrender.com/')
-      .then(response => setApiInfo(response.data))
-      .catch(err => console.error('API info fetch failed:', err));
+    axios
+      .get("https://backend-fever-care-ai.onrender.com/")
+      .then((response) => setApiInfo(response.data))
+      .catch((err) => console.error("API info fetch failed:", err));
   }, []);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -60,14 +65,19 @@ function AITesting() {
       bleeding: formData.bleeding ? 1 : 0,
       platelet_count: parseFloat(formData.platelet_count) || 200,
       mosquito_exposure: formData.mosquito_exposure ? 1 : 0,
-      travel: formData.travel ? 1 : 0
+      travel: formData.travel ? 1 : 0,
     };
 
+    const API_URL = import.meta.env.VITE_API_URL || "http://localhost:7777"
+
     try {
-      const response = await axios.post(`${process.env.BASE_URL}/ml/predict`, apiData);
+      const response = await axios.post(`${API_URL}/ml/predict`, apiData);
       setResult(response.data);
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to get prediction. Please try again.');
+      setError(
+        err.response?.data?.error ||
+          "Failed to get prediction. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -75,8 +85,8 @@ function AITesting() {
 
   const resetForm = () => {
     setFormData({
-      temperature: '',
-      fever_days: '',
+      temperature: "",
+      fever_days: "",
       headache: false,
       body_pain: false,
       eye_pain: false,
@@ -84,9 +94,9 @@ function AITesting() {
       abdominal_pain: false,
       rash: false,
       bleeding: false,
-      platelet_count: '',
+      platelet_count: "",
       mosquito_exposure: false,
-      travel: false
+      travel: false,
     });
     setResult(null);
     setError(null);
@@ -94,19 +104,20 @@ function AITesting() {
 
   const getDiseaseColor = (disease) => {
     const colors = {
-      'Dengue': '#ff6b6b',
-      'Malaria': '#4ecdc4',
-      'Typhoid': '#45b7d1',
-      'Viral': '#96ceb4',
-      'Other': '#ffeaa7'
+      Dengue: "#ff6b6b",
+      Malaria: "#4ecdc4",
+      Typhoid: "#45b7d1",
+      Viral: "#96ceb4",
+      Other: "#ffeaa7",
     };
-    return colors[disease] || '#dfe6e9';
+    return colors[disease] || "#dfe6e9";
   };
 
   const getSeverityLevel = (confidence) => {
-    if (confidence >= 90) return { level: 'High Confidence', color: '#27ae60' };
-    if (confidence >= 70) return { level: 'Moderate Confidence', color: '#f39c12' };
-    return { level: 'Low Confidence', color: '#e74c3c' };
+    if (confidence >= 90) return { level: "High Confidence", color: "#27ae60" };
+    if (confidence >= 70)
+      return { level: "Moderate Confidence", color: "#f39c12" };
+    return { level: "Low Confidence", color: "#e74c3c" };
   };
 
   return (
@@ -130,7 +141,7 @@ function AITesting() {
             <div className="form-group-header">
               <FaHeartbeat /> Vital Signs
             </div>
-            
+
             <div className="input-row">
               <div className="input-group">
                 <label>
@@ -176,10 +187,8 @@ function AITesting() {
             </div>
 
             {/* Symptoms */}
-            <div className="form-group-header">
-              💊 Symptoms
-            </div>
-            
+            <div className="form-group-header">💊 Symptoms</div>
+
             <div className="checkbox-grid">
               <label className="checkbox-label">
                 <input
@@ -256,7 +265,7 @@ function AITesting() {
             <div className="form-group-header">
               <FaMosquito /> Exposure History
             </div>
-            
+
             <div className="checkbox-grid">
               <label className="checkbox-label">
                 <input
@@ -281,9 +290,13 @@ function AITesting() {
 
             <div className="button-group">
               <button type="submit" className="btn-primary" disabled={loading}>
-                {loading ? '🔄 Analyzing...' : '🔍 Diagnose'}
+                {loading ? "🔄 Analyzing..." : "🔍 Diagnose"}
               </button>
-              <button type="button" className="btn-secondary" onClick={resetForm}>
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={resetForm}
+              >
                 🔄 Reset
               </button>
             </div>
@@ -303,9 +316,11 @@ function AITesting() {
             <>
               <div className="result-card main-prediction">
                 <h2>Diagnosis Result</h2>
-                <div 
-                  className="disease-badge" 
-                  style={{ backgroundColor: getDiseaseColor(result.prediction) }}
+                <div
+                  className="disease-badge"
+                  style={{
+                    backgroundColor: getDiseaseColor(result.prediction),
+                  }}
                 >
                   {result.prediction}
                 </div>
@@ -314,17 +329,22 @@ function AITesting() {
                     Confidence: <strong>{result.confidence.toFixed(1)}%</strong>
                   </div>
                   <div className="progress-bar">
-                    <div 
-                      className="progress-fill" 
-                      style={{ 
+                    <div
+                      className="progress-fill"
+                      style={{
                         width: `${result.confidence}%`,
-                        backgroundColor: getSeverityLevel(result.confidence).color
+                        backgroundColor: getSeverityLevel(result.confidence)
+                          .color,
                       }}
                     />
                   </div>
-                  <div className="severity-badge" style={{ 
-                    backgroundColor: getSeverityLevel(result.confidence).color 
-                  }}>
+                  <div
+                    className="severity-badge"
+                    style={{
+                      backgroundColor: getSeverityLevel(result.confidence)
+                        .color,
+                    }}
+                  >
                     {getSeverityLevel(result.confidence).level}
                   </div>
                 </div>
@@ -338,14 +358,16 @@ function AITesting() {
                       <div className="prob-header">
                         <span className="rank">#{idx + 1}</span>
                         <span className="disease-name">{pred.disease}</span>
-                        <span className="prob-value">{pred.probability.toFixed(1)}%</span>
+                        <span className="prob-value">
+                          {pred.probability.toFixed(1)}%
+                        </span>
                       </div>
                       <div className="prob-bar">
-                        <div 
-                          className="prob-fill" 
-                          style={{ 
+                        <div
+                          className="prob-fill"
+                          style={{
                             width: `${pred.probability}%`,
-                            backgroundColor: getDiseaseColor(pred.disease)
+                            backgroundColor: getDiseaseColor(pred.disease),
                           }}
                         />
                       </div>
@@ -359,27 +381,32 @@ function AITesting() {
                 <div className="summary-grid">
                   <div className="summary-item">
                     <span className="label">Temperature:</span>
-                    <span className="value">{result.input_summary.temperature}°F</span>
+                    <span className="value">
+                      {result.input_summary.temperature}°F
+                    </span>
                   </div>
                   <div className="summary-item">
                     <span className="label">Duration:</span>
-                    <span className="value">{result.input_summary.fever_days} days</span>
+                    <span className="value">
+                      {result.input_summary.fever_days} days
+                    </span>
                   </div>
                   <div className="summary-item full-width">
                     <span className="label">Symptoms:</span>
                     <span className="value">
-                      {result.input_summary.key_symptoms.length > 0 
-                        ? result.input_summary.key_symptoms.join(', ')
-                        : 'None reported'}
+                      {result.input_summary.key_symptoms.length > 0
+                        ? result.input_summary.key_symptoms.join(", ")
+                        : "None reported"}
                     </span>
                   </div>
                 </div>
               </div>
 
               <div className="disclaimer">
-                ⚠️ <strong>Disclaimer:</strong> This is an AI-assisted diagnostic tool 
-                with {apiInfo?.accuracy} accuracy. Always consult a healthcare professional 
-                for proper medical diagnosis and treatment.
+                ⚠️ <strong>Disclaimer:</strong> This is an AI-assisted
+                diagnostic tool with {apiInfo?.accuracy} accuracy. Always
+                consult a healthcare professional for proper medical diagnosis
+                and treatment.
               </div>
             </>
           )}
@@ -388,7 +415,10 @@ function AITesting() {
             <div className="empty-state">
               <div className="empty-icon">🩺</div>
               <h3>Ready to Diagnose</h3>
-              <p>Fill in the patient information and click "Diagnose" to get AI-powered predictions.</p>
+              <p>
+                Fill in the patient information and click "Diagnose" to get
+                AI-powered predictions.
+              </p>
             </div>
           )}
         </div>

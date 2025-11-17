@@ -15,6 +15,8 @@ import { z } from "zod";
 import { NewEpisodeForm } from "@/components/ui/NewEpisodeForm";
 import { DailyLogForm } from "@/components/ui/DailyLogForm";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:7777";
+
 const symptomTypes = [
   "Headache",
   "Body Ache",
@@ -76,15 +78,12 @@ export default function SymptomLog() {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await axios.get(
-        `${process.env.BASE_URL}/patient/episode/active`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axios.get(`${API_URL}/patient/episode/active`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       if (response.data.success && response.data.hasActiveEpisode) {
         setActiveEpisode(response.data.episode);
@@ -147,7 +146,7 @@ export default function SymptomLog() {
       const token = localStorage.getItem("token");
 
       const response = await axios.post(
-        `${process.env.BASE_URL}/patient/symptoms/quick`,
+        `${API_URL}/patient/symptoms/quick`,
         {
           symptoms: result.data.symptoms,
           temperature: result.data.temperature,

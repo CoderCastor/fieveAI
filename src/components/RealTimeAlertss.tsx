@@ -19,6 +19,8 @@ interface RealTimeAlertsProps {
   onAlertCountChange?: (count: number) => void;
 }
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:7777"
+
 export function RealTimeAlertss({ onAlertCountChange }: RealTimeAlertsProps) {
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,7 +36,7 @@ export function RealTimeAlertss({ onAlertCountChange }: RealTimeAlertsProps) {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `${process.env.BASE_URL}/clinician/alerts?status=unread`,
+        `${API_URL}/clinician/alerts?status=unread`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -60,7 +62,7 @@ export function RealTimeAlertss({ onAlertCountChange }: RealTimeAlertsProps) {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `${process.env.BASE_URL}/clinician/alerts/${alertId}/read`,
+        `${API_URL}/clinician/alerts/${alertId}/read`,
         {},
         {
           headers: {

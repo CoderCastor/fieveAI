@@ -37,6 +37,8 @@ export default function Chatbot() {
   const [language, setLanguage] = useState("en");
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:7777";
+
   // Load chat history on mount
   useEffect(() => {
     loadChatHistory();
@@ -47,12 +49,9 @@ export default function Chatbot() {
       setLoadingHistory(true);
       const token = localStorage.getItem("token");
 
-      const response = await axios.get(
-        `${process.env.BASE_URL}/api/chatbot/history`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const response = await axios.get(`${API_URL}/api/chatbot/history`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       if (response.data.success) {
         setMessages(response.data.messages);
@@ -82,7 +81,7 @@ export default function Chatbot() {
       const token = localStorage.getItem("token");
 
       const response = await axios.post(
-        `${process.env.BASE_URL}/api/chatbot/chat`,
+        `${API_URL}/api/chatbot/chat`,
         {
           message: input,
           language,
@@ -122,7 +121,7 @@ export default function Chatbot() {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.delete(`${process.env.BASE_URL}/api/chatbot/history`, {
+      await axios.delete(`${API_URL}/api/chatbot/history`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

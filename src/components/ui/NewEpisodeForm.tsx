@@ -12,6 +12,8 @@ interface NewEpisodeFormProps {
   onSuccess: (episode: any) => void;
 }
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:7777"
+
 export function NewEpisodeForm({ onSuccess }: NewEpisodeFormProps) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -40,7 +42,7 @@ export function NewEpisodeForm({ onSuccess }: NewEpisodeFormProps) {
       const token = localStorage.getItem("token");
 
       const response = await axios.post(
-        `${process.env.BASE_URL}/patient/episode/start-with-history`,
+        `${API_URL}/patient/episode/start-with-history`,
         formData,
         {
           headers: {

@@ -53,6 +53,8 @@ interface PatientMedicationsProps {
   medications?: Medication[];
 }
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:7777"
+
 export const PatientMedicationss = ({
   medications: propMedications,
 }: PatientMedicationsProps) => {
@@ -82,15 +84,12 @@ export const PatientMedicationss = ({
     try {
       const token = localStorage.getItem("token");
 
-      const response = await axios.get(
-        `${process.env.BASE_URL}/patient/medications`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axios.get(`${API_URL}/patient/medications`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       if (response.data.success) {
         setMedications(response.data.medications);
@@ -111,7 +110,7 @@ export const PatientMedicationss = ({
       await Promise.all(
         meds.map(async (med) => {
           const response = await axios.get(
-            `${process.env.BASE_URL}/patient/medication-logs/${med._id}/today`,
+            `${API_URL}/patient/medication-logs/${med._id}/today`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -146,7 +145,7 @@ export const PatientMedicationss = ({
         : [];
 
       const response = await axios.post(
-        `${process.env.BASE_URL}/patient/medication-log`,
+        `${API_URL}/patient/medication-log`,
         {
           medicationId: selectedMed._id,
           status: logStatus,

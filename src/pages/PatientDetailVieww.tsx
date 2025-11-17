@@ -86,6 +86,8 @@ interface DayDetailData {
   createdAt: string;
 }
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:7777"
+
 export default function PatientDetailVieww() {
   const { patientId } = useParams();
   const navigate = useNavigate();
@@ -113,7 +115,7 @@ export default function PatientDetailVieww() {
       const token = localStorage.getItem("token");
 
       const response = await axios.get(
-        `${process.env.BASE_URL}/clinician/patient/${patientId}`,
+        `${API_URL}/clinician/patient/${patientId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -150,7 +152,7 @@ export default function PatientDetailVieww() {
       const token = localStorage.getItem("token");
 
       const response = await axios.post(
-        `${process.env.BASE_URL}/clinician/patient/${patientId}/alert`,
+        `${API_URL}/clinician/patient/${patientId}/alert`,
         {
           message: alertMessage,
           severity: alertSeverity,

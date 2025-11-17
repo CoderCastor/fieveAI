@@ -16,6 +16,8 @@ import {
   FaVial,
 } from "react-icons/fa";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:7777"
+
 function ClinicianAIAnalysis() {
   const navigate = useNavigate();
   const { patientId } = useParams();
@@ -44,7 +46,7 @@ function ClinicianAIAnalysis() {
       const token = localStorage.getItem("token");
 
       const response = await axios.get(
-        `${process.env.BASE_URL}/clinician/patient/${patientId}/ai-analysis`,
+        `${API_URL}/clinician/patient/${patientId}/ai-analysis`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -125,7 +127,7 @@ function ClinicianAIAnalysis() {
       const token = localStorage.getItem("token");
 
       const response = await axios.post(
-        `${process.env.BASE_URL}/ml/predict`,
+        `${API_URL}/ml/predict`,
         {
           patientId: data.patient._id,
           episodeId: data.episode._id,

@@ -21,6 +21,8 @@ const loginSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:7777"
+
 export default function ClinicianLogin() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -42,13 +44,10 @@ export default function ClinicianLogin() {
       }
 
       // ✅ FIXED: Added missing slash in URL
-      const response = await axios.post(
-        `${process.env.BASE_URL}/login/clinician`,
-        {
-          email: result.data.email,
-          password: result.data.password,
-        }
-      );
+      const response = await axios.post(`${API_URL}/login/clinician`, {
+        email: result.data.email,
+        password: result.data.password,
+      });
 
       // ✅ FIXED: Check for success and data structure
       if (response.data.success && response.data.data.token) {

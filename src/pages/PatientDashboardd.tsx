@@ -119,6 +119,8 @@ interface DayDetailData {
   createdAt: string;
 }
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:7777"
+
 const PatientDashboardd = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("home");
@@ -166,15 +168,12 @@ const PatientDashboardd = () => {
         return;
       }
 
-      const response = await axios.get(
-        `${process.env.BASE_URL}/patient/dashboard`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axios.get(`${API_URL}/patient/dashboard`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       if (response.data.success) {
         const data: DashboardData = {
@@ -251,7 +250,7 @@ const PatientDashboardd = () => {
       }
 
       const response = await axios.post(
-        `${process.env.BASE_URL}/patient/episode/start`,
+        `${API_URL}/patient/episode/start`,
         {},
         {
           headers: {
@@ -290,7 +289,7 @@ const PatientDashboardd = () => {
       const token = localStorage.getItem("token");
 
       const response = await axios.post(
-        `${process.env.BASE_URL}/patient/alert/send`,
+        `${API_URL}/patient/alert/send`,
         {
           message: alertMessage,
           severity: alertSeverity,
@@ -322,7 +321,7 @@ const PatientDashboardd = () => {
       const token = localStorage.getItem("token");
 
       await axios.put(
-        `${process.env.BASE_URL}/patient/alerts/${alertId}/read`,
+        `${API_URL}/patient/alerts/${alertId}/read`,
         {},
         {
           headers: {

@@ -55,6 +55,8 @@ interface DashboardStats {
   unreadAlertsCount: number;
 }
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:7777"
+
 const ClinicianDashboardd = () => {
   const navigate = useNavigate();
   const [patients, setPatients] = useState<Patient[]>([]);
@@ -94,15 +96,12 @@ const ClinicianDashboardd = () => {
       setLoading(true);
       const token = localStorage.getItem("token");
 
-      const response = await axios.get(
-        `${process.env.BASE_URL}/clinician/dashboard`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axios.get(`${API_URL}/clinician/dashboard`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       if (response.data.success) {
         setPatients(response.data.patients);
@@ -186,7 +185,7 @@ const ClinicianDashboardd = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.post(
-        `${process.env.BASE_URL}/clinician/export`,
+        `${API_URL}/clinician/export`,
         { patientIds: Array.from(selectedPatients) },
         {
           headers: {

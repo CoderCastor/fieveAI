@@ -3,7 +3,14 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Activity, Loader2 } from "lucide-react";
@@ -14,6 +21,8 @@ const signupSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:7777"
 
 export default function PatientSignup() {
   const navigate = useNavigate();
@@ -29,7 +38,7 @@ export default function PatientSignup() {
     try {
       // Validate input
       const result = signupSchema.safeParse({ name, email, password });
-      
+
       if (!result.success) {
         toast.error(result.error.issues[0].message);
         setLoading(false);
@@ -37,7 +46,7 @@ export default function PatientSignup() {
       }
 
       // Make API call using Axios
-      const response = await axios.post(`${process.env.BASE_URL}/signup/patient`, {
+      const response = await axios.post(`${API_URL}/signup/patient`, {
         name: result.data.name,
         email: result.data.email,
         password: result.data.password,
@@ -45,10 +54,9 @@ export default function PatientSignup() {
 
       toast.success("Account created successfully! Please login.");
       navigate("/signin-patient");
-      
     } catch (error) {
-      console.error('Signup error:', error);
-      
+      console.error("Signup error:", error);
+
       if (error.response) {
         toast.error(error.response.data.message || "Signup failed");
       } else if (error.request) {
@@ -70,10 +78,12 @@ export default function PatientSignup() {
               <Activity className="h-8 w-8 text-primary-foreground" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold">Create Patient Account</CardTitle>
+          <CardTitle className="text-2xl font-bold">
+            Create Patient Account
+          </CardTitle>
           <CardDescription>Join FieveAI to track your health</CardDescription>
         </CardHeader>
-        
+
         <form onSubmit={handleSignup}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -101,7 +111,7 @@ export default function PatientSignup() {
                 className="transition-all focus:ring-2 focus:ring-primary"
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <Input
@@ -118,11 +128,11 @@ export default function PatientSignup() {
               </p>
             </div>
           </CardContent>
-          
+
           <CardFooter className="flex flex-col space-y-4">
-            <Button 
-              type="submit" 
-              className="w-full bg-gradient-primary hover:opacity-90 transition-opacity" 
+            <Button
+              type="submit"
+              className="w-full bg-gradient-primary hover:opacity-90 transition-opacity"
               disabled={loading}
             >
               {loading ? (
@@ -134,10 +144,13 @@ export default function PatientSignup() {
                 "Create Account"
               )}
             </Button>
-            
+
             <p className="text-sm text-center text-muted-foreground">
               Already have an account?{" "}
-              <Link to="/signin-patient" className="text-primary hover:underline font-medium">
+              <Link
+                to="/signin-patient"
+                className="text-primary hover:underline font-medium"
+              >
                 Sign in
               </Link>
             </p>
